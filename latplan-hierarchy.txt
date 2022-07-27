@@ -1,0 +1,33 @@
+
+ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus
+
+	StridedConvolutionalMixin
+
+		ConvolutionalMixin
+
+			EncoderDecoderMixin	NO PARENT
+
+	ConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus
+
+		DetActionMixin	NO PARENT
+
+		NormalizedLogitAddBidirectionalMixin
+		
+			NormalizedLogitAddPreconditionMixin
+
+			NormalizedLogitAddEffectMixin
+
+		BaseActionMixinAMA4Plus
+
+			BidirectionalMixin		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+				PreconditionMixin
+
+				EffectMixin
+
+			BaseActionMixin
+
+		TransitionWrapper
+
+		StateAE
+
