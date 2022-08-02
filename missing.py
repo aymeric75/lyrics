@@ -51,6 +51,8 @@ lyr.current_world.lambda_c = tf.constant(1.)
 
 
 
+print(tf.shape(X))
+exit()
 
 Points = lyr.Domain(label="Points", data=X)
 

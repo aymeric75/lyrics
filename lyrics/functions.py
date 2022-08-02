@@ -15,6 +15,8 @@ from train_common import parameters
 
 from tensorflow.python.framework import ops
 
+import numpy as np
+
 FUNCTIONS = {}
 
 eps = 1e-12
@@ -375,23 +377,46 @@ class LatplanSAE(Learner):
     def _internal_(self,x):
 
 
-        ops.reset_default_graph()
+        #ops.reset_default_graph()
 
-        with tf.variable_scope(self.name, reuse = self._reuse):
+        #with tf.variable_scope(self.name, reuse = self._reuse):
 
 
-            task = curry(loadsNetWithWeightsGOOD, latplan.model.get(parameters["aeclass"]), path, train, train, val, val)
-            _add_misc_info(parameters)
-            latplan_model, error = task(parameters)
-            os.chdir('../../latplan')
-            y = latplan_model.autoencode(x)
-            os.chdir('./')
-            return y,x
+        task = curry(loadsNetWithWeightsGOOD, latplan.model.get(parameters["aeclass"]), path, train, train, val, val)
+        
+        _add_misc_info(parameters)
+
+        latplan_model, error = task(parameters)
+
+        os.chdir('../latplan')
+
+        print('type x ')
+        print(type(x))
+        print(tf.shape(x))
+
+        # 
+        x = x.eval(session=tf.compat.v1.Session())
+        print(x.shape)
+
+        x = np.expand_dims(x, axis=0)
+        x = np.expand_dims(x, axis=-1)
+        #x = np.expand_dims(x, axis=-1)
+        print(x.shape)
+
+
+        y = latplan_model.autoencode(x)
+
+        print("type y ")
+        print(type(y))
+        os.chdir('./')
+
+        
+        return y,x
 
     def __call__(self,x):
-        x = tf.cast(x, tf.float32)
+        x = tf.cast(x, tf.float64)
 
-        x = tf.reshape(x, [-1, self.input_size]) # if x is (48, 48) and sefl.input_size=2304 then will become [-1, 2304]
+        #x = tf.reshape(x, [-1, self.input_size]) # if x is (48, 48) and sefl.input_size=2304 then will become [-1, 2304]
 
 
         y,_ = self._internal_(x)

@@ -30,6 +30,10 @@ class IndexingFunction():
         return tf.sigmoid(tf.gather(self.var, idx))
 k = 6
 
+
+print(tf.shape(tf.zeros([0,1])))
+exit()
+
 lyr.Domain(label="People", data=tf.zeros([0,1]))
 lyr.Individual(label="Marco", domain="People", value=[0])
 lyr.Individual(label="Giuseppe", domain="People", value=[1])

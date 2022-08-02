@@ -381,6 +381,9 @@ class Constraint(object):
         self.tensor = self.root.tensor
 
 
+        print("self.tensor")
+        print(self.tensor)
+
 
         c_weight = 1.
         if weight is not None:
@@ -394,6 +397,23 @@ class Constraint(object):
 
         def hinge(x):
             return tf.where(x > 0.90, tf.ones_like(x), x)
+
+        
+
+        print("current_world.constraint_loss  1111")
+        print(current_world.constraint_loss)
+
+        print("current_world.logic.loss(self.tensor)")
+        print(current_world.logic.loss(self.tensor))
+
+        #current_world.constraint_loss = tf.cast(current_world.constraint_loss, tf.float64)
+
+        #current_world.lagrangian_loss = tf.cast(current_world.lagrangian_loss, tf.float64)
+
+
+
+        print("current_world.constraint_loss  222")
+        print(current_world.constraint_loss)
 
         current_world.constraint_loss += tf.reduce_sum(c_weight * current_world.logic.loss(self.tensor))
         current_world.lagrangian_loss += tf.reduce_sum(c_weight * current_world.logic.loss(hinge(self.tensor)))

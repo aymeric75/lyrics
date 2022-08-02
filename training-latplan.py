@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+
+import tensorflow as tf
+
+
 import sys
 sys.path.append(r"../latplan")
 import latplan
@@ -24,7 +28,6 @@ from lyrics import lyrics as lyr
 import matplotlib.pyplot as plt
 
 from train_common import parameters
-
 
 
 
@@ -62,11 +65,6 @@ parameters["optimizer"] = "radam"
 
 
 
-print("OK0")
-
-
-
-
 
 parameters["aeclass"] = 'CubeSpaceAE_AMA4Conv'
 
@@ -75,86 +73,106 @@ parameters["aeclass"] = 'CubeSpaceAE_AMA4Conv'
 transitions, states = load_puzzle('mnist', 3, 3, 40000, objects=False)
 train, val, test = train_val_test_split(transitions)
 transitions = train
+
+transitions = transitions.astype('float32')
+
+
 x =  transitions[:6] # (6, 2, 48, 48, 1) # 6 transitions d'image 48 x 48
 
 
 
-# transitions[0,0] = 1ere image du dataset
-
-#plt.imshow(transitions[0,0])
-#plt.savefig('Image.png')
-
-print("OK1")
 
 
-# LOAD the model: FAIT dans functions.py !
+# 1) Instanciation of the LatplanSAE from the lyr.functions module
 
-# path = 'samples/puzzle_mnist_3_3_40000_CubeSpaceAE_AMA4Conv'
-# task = curry(loadsNetWithWeightsGOOD, latplan.model.get(parameters["aeclass"]), path, train, train, val, val)
-# _add_misc_info(parameters)
-# parameters['hash'] = "8dd53f4ca49f65444250447a16903f86"
-# os.chdir('../latplan')
-# latplan_model, error = task(parameters)
-# os.chdir('./')	
+res_SAE = lyr.functions.LatplanSAE("res_SAE",2304,99,[99]) # "99" because we don't use them
 
 
 
 
+# 2) class that when called, return a tensor representing the truth value of x==y
 
-class isEqual():
+class areEqual(lyr.functions.AbstractFunction):
 
     def __call__(self, x, y):
+
         batch = tf.shape(x)[0]
 
         x = tf.reshape(x, [batch, -1])
+
+        #y = SAE(x)
+
         y = tf.reshape(y, [batch, -1])
+
         return 1 - tf.reduce_mean(tf.abs(x - y), axis=1)
 
 
 
-# 
+
+# 3) Instanciation of the Domain class into an object "Images" 
+#     the tensor of this object has same shape as an image (48, 48)
+
+#Images = lyr.Domain(label="Image", data=tf.zeros(np.squeeze(transitions[0,0])))
+
+#Images = lyr.Domain(label="Image", data=tf.zeros([transitions[0,0]]))
+ 
+Images = lyr.Domain(label="Image", data=tf.zeros([48, 48]))
 
 
-Images = lyr.Domain(label="Images", data=np.squeeze(transitions[0,0]))
+# 4) Instanciation of the Function class
+#     with self.label = "SAE" and self.function = "res_SAE"
 
-print("OK2")
-
-SAE = lyr.functions.LatplanSAE("SAE",2304,99,[99]) # "99" because we don't use them
-
-print("OK3")
+#F1 = lyr.Function("SAE", domains=("Image"), function=res_SAE)
 
 
-lyr.Function("SAE", domains=("Images"), function=SAE)
+# 5) Instantiation of the areEqual class
+areEqual = areEqual()
 
-print("OK4")
 
-equal = isEqual()
+# 6) Instanciation of the Relation class
+lyr.Relation(label="areEqual", domains=("Image", "Image"), function = areEqual) # Constraint
 
-print("OK5")
 
-lyr.Relation(label="is", domains=("Images", "Images"), function = equal)
-print("OK6")
+# 7) Instanciation of the Constraint class
+lyr.Constraint("forall x: areEqual(x, x)", 1.)
 
-lyr.Constraint("forall x: is(x, SAE(x))")
-print("OK7")
+
+
+
+# The goal now is to do what ????
+
+#       ===> 
+
 
 
 
 loss =  lyr.current_world.loss()
-
-########################################
-# FROM AUTOENCODER version of Lyrics
-########################################
-
-# l = LogicFactory.create("lukasiewicz-strong")
-# l1_loss_bab = 1 - l.forall(equal(bab,self.domain_B)) # reconstruction
+train_op = tf.train.GradientDescentOptimizer(1).minimize(loss)
 
 
+exit()
+
+
+#################################################################################################################
+
+
+
+activate_rules = tf.placeholder(dtype=tf.bool, shape=[])
+
+loss =  lyr.current_world.pointwise_loss
 
 
 lr = tf.placeholder(dtype=tf.float32, shape=[])
+
+loss = tf.cond(activate_rules, lambda: loss, lambda:loss)
+
+
+print(tf.trainable_variables())
+
+
 train_op = tf.train.AdamOptimizer(lr).minimize(loss)
 
+exit()
 
 
 # ensuite tu le lance

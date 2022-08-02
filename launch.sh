@@ -11,4 +11,14 @@
 
 
 
-./training-latplan.py
+./training-latplan2.py
+
+#./collective.py
+
+#./deduction.py
+
+#./manifold.py
+
+#./missing.py
+
+#./reasoning.py

@@ -83,6 +83,10 @@ X = tf.cast(X, tf.float32)
 
 
 
+print(tf.shape(X))
+exit()
+
+
 Points = lyr.Domain(label="Points", data=X)
 
 R1 = lyr.Relation("A", domains=("Points"), function=is_A)
@@ -90,6 +94,9 @@ R2 = lyr.Relation("isClose", domains=("Points", "Points"), function=is_close)
 
 
 C = lyr.Constraint("forall p: forall q: isClose(p,q) -> (A(p) <-> A(q))")
+
+
+exit()
 
 
 

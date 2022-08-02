@@ -229,7 +229,15 @@ is_C = IndexingFunction(len(Test), initial_value=invSigm(priorC))
 
 Test = np.reshape(range(len(Test)), [-1, 1])
 
+
+print(tf.shape(tf.constant(Test)))
+exit()
+
+
+
 lyr.Domain(label="Points", data=tf.constant(Test))
+
+
 
 lyr.Relation(label="A", domains=("Points"), function=is_A)
 lyr.Relation(label="B", domains=("Points"), function=is_B)

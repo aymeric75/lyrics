@@ -69,6 +69,9 @@ for i in range(epoch):
         print(sess.run(loss))
 
 
+print(tf.shape(tf.concat((dataA, dataB), axis=0)))
+exit()
+
 
 lyr.Domain(label="Points", data=tf.concat((dataA, dataB), axis=0))
 

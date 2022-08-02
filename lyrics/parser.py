@@ -286,8 +286,9 @@ class Function(Term):
                 Function.cache[self.id] = self.tensor
 
         with tf.name_scope("FunctionOutputReshapeToConstraintShape"):
-        # bringing back the tensor to its function shape and putting the new dimension as last dimension
-        #     last_dim = tf.shape(self.tensor)[-1]
+            print("icviii")
+            # bringing back the tensor to its function shape and putting the new dimension as last dimension
+            #     last_dim = tf.shape(self.tensor)[-1]
             last_dim = np.array([self.tensor.shape.as_list()[-1]])
             self.tensor = tf.reshape(self.tensor, tf.concat((fun_shape, last_dim), 0))
 

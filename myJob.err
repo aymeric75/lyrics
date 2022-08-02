@@ -1,27 +1,36 @@
 Using TensorFlow backend.
 Traceback (most recent call last):
-  File "./training-latplan.py", line 138, in <module>
-    lyr.Constraint("forall x: is(x, SAE(x))")
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 1607, in _create_c_op
+    c_op = c_api.TF_FinishOperation(op_desc)
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Cannot reshape a tensor with 2304 elements to shape [48] (48 elements) for 'FunctionOutputReshapeToConstraintShape/Reshape' (op: 'Reshape') with input shapes: [48,48], [1] and with input tensors computed as partial shapes: input[1] = [48].
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "./training-latplan2.py", line 84, in <module>
+    lyr.Constraint("forall x: equals(x, x)", 1.)
   File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/lyrics.py", line 380, in __init__
     self.root.compile()
-  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 555, in compile
+  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 556, in compile
     super(ForAll, self).compile()
   File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 30, in compile
     i.compile()
-  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 335, in compile
-    i.compile()
-  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 285, in compile
-    self.tensor = self.function.function(*tensors)
-  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/functions.py", line 397, in __call__
-    y,_ = self._internal_(x)
-  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/functions.py", line 385, in _internal_
-    latplan_model, error = task(parameters)
-  File "../latplan/latplan/util/util.py", line 2, in <lambda>
-    return lambda *args,**kwargs: fn(*args1,*args,**{**kwargs1,**kwargs})
-  File "../latplan/latplan/util/tuning.py", line 172, in loadsNetWithWeightsGOOD
-    keras.backend.clear_session()
-  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py", line 107, in clear_session
-    tf.reset_default_graph()
-  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 5852, in reset_default_graph
-    raise AssertionError("Do not use tf.reset_default_graph() to clear "
-AssertionError: Do not use tf.reset_default_graph() to clear nested graphs. If you need a cleared graph, exit the nesting and create a new graph.
+  File "/g100_work/uBS21_InfGer_0/lyrics/lyrics/parser.py", line 379, in compile
+    self.tensor = tf.reshape(self.tensor, fun_shape)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/ops/array_ops.py", line 131, in reshape
+    result = gen_array_ops.reshape(tensor, shape, name)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/ops/gen_array_ops.py", line 8115, in reshape
+    "Reshape", tensor=tensor, shape=shape, name=name)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/op_def_library.py", line 794, in _apply_op_helper
+    op_def=op_def)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/util/deprecation.py", line 507, in new_func
+    return func(*args, **kwargs)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 3357, in create_op
+    attrs, op_def, compute_device)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 3426, in _create_op_internal
+    op_def=op_def)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 1770, in __init__
+    control_input_ops)
+  File "/g100/home/userexternal/abarbin0/.conda/envs/latplan/lib/python3.7/site-packages/tensorflow_core/python/framework/ops.py", line 1610, in _create_c_op
+    raise ValueError(str(e))
+ValueError: Cannot reshape a tensor with 2304 elements to shape [48] (48 elements) for 'FunctionOutputReshapeToConstraintShape/Reshape' (op: 'Reshape') with input shapes: [48,48], [1] and with input tensors computed as partial shapes: input[1] = [48].
