@@ -337,6 +337,9 @@ class Atomic(object):
             self.id = self.id + "_" + i.id
 
 
+        print("self.constraint.cartesian_shape")        
+        print(self.constraint.cartesian_shape)
+
         with tf.name_scope("FunctionShape"):
             self.function_shape = copy.copy(self.constraint.cartesian_shape)
             set_ = set(self.vars)
@@ -345,6 +348,9 @@ class Atomic(object):
                     self.function_shape[i] = 1
             fun_shape = np.stack(self.function_shape, axis=0)
 
+        print("fun_shape")
+
+        print(fun_shape)
 
         if self.id in Atomic.cache and actOpt:
             self.tensor = Atomic.cache[self.id]
@@ -366,6 +372,9 @@ class Atomic(object):
                         to_repeat = np.reshape(temp, [np.prod(temp.shape)])
 
                         to_repeat = np.concatenate((to_repeat, [1]), axis=0)  # adding no repetition for domain columns
+                        print("teeeenn")
+                        print(tensor)
+                        print(to_repeat)
                         tensor = tf.tile(tensor, to_repeat)
                         tensor = tf.reshape(tensor,[int(np.prod(tensor.shape.as_list())/size), size])  # flattening the tensor into its cartesian product projection
                         tensors.append(tensor)
@@ -376,7 +385,10 @@ class Atomic(object):
         #Atomics tile immediately to cartesian shape (they are monodimensional)
         #TODO think if it is necessary to make the connectives expand dimensions
         with tf.name_scope("FunctionOutputReshapeToConstraintShape"):
+            print(tf.shape(self.tensor))
+            print(fun_shape)
             self.tensor = tf.reshape(self.tensor, fun_shape)
+            #self.tensor = tf.reshape(self.tensor, [48, 48])
             shape_arg = self.tensor.shape.as_list()
             to_repeat = np.stack(self.constraint.cartesian_shape, axis=0) - shape_arg + 1
             temp = tf.tile(self.tensor, to_repeat)
@@ -727,8 +739,12 @@ class FOLParser(object):
         domain = oneOf(world.domains.keys())
         single_filter = Group(var + Suppress("in") + domain)
         filter_expression = left_square + delimitedList(single_filter) + right_square
+        print(type(filter_expression))
         filter_expression.setParseAction(self._createParseAction("FILTER", constraint))
         constraint = term ^ formula + Optional(filter_expression)
+        print(type(constraint))
         tree = constraint.parseString(definition, parseAll=True)
+        print(type(tree))
+        print(type(tree[0]))
         # tree = formula.parseString(definition)
         return tree[0]

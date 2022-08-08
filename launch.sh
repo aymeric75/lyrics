@@ -11,7 +11,12 @@
 
 
 
-./training-latplan2.py
+
+./reasoning2.py
+
+
+
+#./training-latplan2.py
 
 #./collective.py
 
@@ -20,5 +25,3 @@
 #./manifold.py
 
 #./missing.py
-
-#./reasoning.py

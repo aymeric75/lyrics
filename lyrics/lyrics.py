@@ -139,6 +139,7 @@ class Domain(object):
         self.individuals[individual.label]=self
 
     def __str__(self):
+        return str(self.tensor)
         return str(self.tensor.numpy())
 
 class SubDomain(Domain):
@@ -368,7 +369,17 @@ class Constraint(object):
                 # This is the shape of the multi-dimensional tensor, where each dimension corresponds to a variable
                 if len(self.variables_list)>0: #not gounded formula
                     try:
+                        print("self.variables_list")
+                        print(self.variables_list)
+                        print("a.domain.tensor.shape")
+                        print(self.variables_list[0].domain.tensor.shape)
+                        print("a.domain.tensor.shape.as_list() ")
+                        print(self.variables_list[0].domain.tensor.shape.as_list())
+                        print("a.domain.tensor.shape.as_list()[0]")
+                        print(self.variables_list[0].domain.tensor.shape.as_list()[0])
+                        print("iiiiccciii")
                         self.cartesian_shape = [a.domain.tensor.shape.as_list()[0] for a in self.variables_list]
+                        print(self.cartesian_shape)
                     except AttributeError: #None domain for a variable
                         raise Exception("In constraint [%s], a variable has not been used in any predicate or function" % self.definition)
                 else:
@@ -378,6 +389,8 @@ class Constraint(object):
 
         # Compiling the expression tree
         self.root.compile()
+
+
         self.tensor = self.root.tensor
 
 

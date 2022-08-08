@@ -2,3 +2,33 @@ Default float: float32
 loaded. picsize: [48, 48]
 (40000, 2, 48, 48, 1)
 normalized shape: (48, 48, 1) (48, 48, 1)
+ESSAI
+<class 'pyparsing.core.And'>
+<class 'pyparsing.core.Or'>
+<class 'pyparsing.results.ParseResults'>
+<class 'lyrics.parser.Atomic'>
+self.constraint.cartesian_shape
+[1]
+fun_shape
+[1]
+lol
+Tensor("Atomic_is/FunctionInputCreation/Reshape:0", shape=(1, 1), dtype=float32)
+Tensor("Atomic_is/FunctionInputCreation/Reshape_1:0", shape=(1, 1), dtype=float32)
+<tf.Variable 'sim:0' shape=() dtype=float32_ref>
+Tensor("Atomic_is/Sigmoid:0", shape=(), dtype=float32)
+Tensor("FunctionOutputReshapeToConstraintShape/Shape:0", shape=(0,), dtype=int32)
+[1]
+self.tensor
+Tensor("FunctionOutputReshapeToConstraintShape/cond/Merge:0", shape=(1,), dtype=float32)
+current_world.constraint_loss  1111
+Tensor("Const_5:0", shape=(), dtype=float32)
+current_world.logic.loss(self.tensor)
+Tensor("sub:0", shape=(1,), dtype=float32)
+current_world.constraint_loss  222
+Tensor("Const_5:0", shape=(), dtype=float32)
+fr
+fr2
+5.0
+fr2
+4.0
+fr3

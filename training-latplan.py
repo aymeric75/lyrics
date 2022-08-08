@@ -92,19 +92,26 @@ res_SAE = lyr.functions.LatplanSAE("res_SAE",2304,99,[99]) # "99" because we don
 
 # 2) class that when called, return a tensor representing the truth value of x==y
 
-class areEqual(lyr.functions.AbstractFunction):
+# class areEqual(lyr.functions.AbstractFunction):
+
+#     def __call__(self, x, y):
+
+#         batch = tf.shape(x)[0]
+
+#         x = tf.reshape(x, [batch, -1])
+
+#         #y = SAE(x)
+
+#         y = tf.reshape(y, [batch, -1])
+
+#         return 1 - tf.reduce_mean(tf.abs(x - y), axis=1)
+
+
+class areEqual():
 
     def __call__(self, x, y):
 
-        batch = tf.shape(x)[0]
-
-        x = tf.reshape(x, [batch, -1])
-
-        #y = SAE(x)
-
-        y = tf.reshape(y, [batch, -1])
-
-        return 1 - tf.reduce_mean(tf.abs(x - y), axis=1)
+        return tf.cast(tf.equal(x,y), tf.float32)
 
 
 
@@ -151,7 +158,6 @@ train_op = tf.train.GradientDescentOptimizer(1).minimize(loss)
 
 
 exit()
-
 
 #################################################################################################################
 

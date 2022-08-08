@@ -118,19 +118,125 @@ class BinaryIndexFunction(AbstractFunction):
 
     def __init__(self, name, k1=None,k2=None, var = None):
         super(BinaryIndexFunction, self).__init__()
-        if k1 is not None and k2 is not None:
-            self.var = tf.get_variable(name, initializer= -4 * tf.ones([k1,k2]))
-        elif var is not None:
-            self.var = var
-        else:
-            raise Exception("You must provide both k1 and k2, or alternatively a single var")
+        #if k1 is not None and k2 is not None:
+            
+        self.var = tf.get_variable(name, initializer= -4 * tf.ones([k1,k2]))
+
+
+
+        # self.idx0 = tf.get_variable("idx0", initializer= -1.)
+
+        # self.idx1= tf.get_variable("idx1", initializer= 4.)
+
+        # self.idx = 0.
+
+        #elif var is not None:
+        #    self.var = var
+        #else:
+        #    raise Exception("You must provide both k1 and k2, or alternatively a single var")
 
     def __call__(self, idx1, idx0):
-        idx0 = tf.cast(idx0, tf.int64)
-        idx1 = tf.cast(idx1, tf.int64)
-        idx = tf.concat((idx1, idx0), axis=1)
-        res = tf.gather_nd(params=self.var, indices=idx)
+
+        print("IDXXXX0000")
+        print(idx0)
+        print(idx1)
+
+
+
+
+
+        # self.idx0 = tf.cast(self.idx0, tf.float64)
+
+        # self.idx1 = tf.cast(self.idx1, tf.int64)
+
+        # self.idx = tf.stack([self.idx1, self.idx0])
+
+        # self.idx = tf.cast(self.idx, tf.float32)
+
+        return tf.sigmoid(tf.reduce_mean(self.var))
+
+
+        print(idx)
+        res = tf.gather_nd(params=self.var, indices=idx) # select values among the inputs (idx0 and idx1)
+        print(res)
         return tf.sigmoid(res)
+
+
+
+
+
+
+class AreEqual(AbstractFunction):
+
+    def __init__(self, name, var = None):
+        super(AreEqual, self).__init__()
+        #if k1 is not None and k2 is not None:
+        self.var = tf.get_variable(name, initializer= -4.)
+        #elif var is not None:
+        #    self.var = var
+        #else:
+        #    raise Exception("You must provide both k1 and k2, or alternatively a single var")
+
+        # 
+
+
+
+        # a = tf.Variable(5)
+
+        # b = tf.constant(4)
+
+        # a.assign(b)
+
+        # tfs = tf.InteractiveSession()
+
+        # tfs.run(tf.global_variables_initializer())
+
+        # print(tfs.run(a))
+
+
+    def __call__(self, a, b):
+
+        # une fonction qui modifie self.var ou qui reassigne value à self.var
+        print("lol")
+        print(a)
+        print(b)
+        print(self.var)
+        print(tf.sigmoid(tf.reduce_mean(tf.abs(a - b))))
+
+
+        self.var.assign(tf.sigmoid(tf.reduce_mean(tf.abs(a - b))))
+
+
+        #tf.sigmoid(tf.reduce_mean(self.var))
+
+        return self.var
+
+
+
+        # self.var = tf.sigmoid(tf.reduce_mean(tf.abs(a - b)))
+
+        # return tf.sigmoid(tf.reduce_mean(self.var))
+
+        # return self.var
+
+        # return tf.cast(tf.equal(a*self.var,b), tf.float32)
+
+
+        # print("IDXXXX")
+        # print(idx0)
+        # print(idx1)
+        # idx0 = tf.cast(idx0, tf.int64)
+        # idx1 = tf.cast(idx1, tf.int64)
+        # idx = tf.concat((idx1, idx0), axis=1)
+        # res = tf.gather_nd(params=self.var, indices=idx)
+        # return tf.sigmoid(res)
+
+
+
+
+
+
+
 
 class StaticBinaryIndexFunction(AbstractFunction):
 
