@@ -348,11 +348,8 @@ class Atomic(object):
                     self.function_shape[i] = 1
             fun_shape = np.stack(self.function_shape, axis=0)
 
-        print("fun_shape")
 
-        print(fun_shape)
-
-        if self.id in Atomic.cache and actOpt:
+        if self.id in Atomic.cache and actOpt and 1 == 0:
             self.tensor = Atomic.cache[self.id]
         else:
             with tf.name_scope("Atomic_" + self.label):
@@ -370,13 +367,17 @@ class Atomic(object):
                         size = shape[-1]  # domain dimension
                         temp = fun_shape - shape_arg + 1  # putting to 1 all existent axis
                         to_repeat = np.reshape(temp, [np.prod(temp.shape)])
-
+                        #print("to_repeat0")
+                        #print(to_repeat)
                         to_repeat = np.concatenate((to_repeat, [1]), axis=0)  # adding no repetition for domain columns
-                        print("teeeenn")
-                        print(tensor)
-                        print(to_repeat)
+                        #print("to_repeat1")
+                        #print(to_repeat)
                         tensor = tf.tile(tensor, to_repeat)
+                        #print("tiled tensor ")
+                        #print(tensor)
                         tensor = tf.reshape(tensor,[int(np.prod(tensor.shape.as_list())/size), size])  # flattening the tensor into its cartesian product projection
+                        #print("reshaped tensor")
+                        #print(tensor)
                         tensors.append(tensor)
 
                 self.tensor = self.predicate.function(*tensors)

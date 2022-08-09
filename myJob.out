@@ -2,33 +2,100 @@ Default float: float32
 loaded. picsize: [48, 48]
 (40000, 2, 48, 48, 1)
 normalized shape: (48, 48, 1) (48, 48, 1)
-ESSAI
-<class 'pyparsing.core.And'>
-<class 'pyparsing.core.Or'>
-<class 'pyparsing.results.ParseResults'>
-<class 'lyrics.parser.Atomic'>
-self.constraint.cartesian_shape
-[1]
-fun_shape
-[1]
-lol
-Tensor("Atomic_is/FunctionInputCreation/Reshape:0", shape=(1, 1), dtype=float32)
-Tensor("Atomic_is/FunctionInputCreation/Reshape_1:0", shape=(1, 1), dtype=float32)
-<tf.Variable 'sim:0' shape=() dtype=float32_ref>
-Tensor("Atomic_is/Sigmoid:0", shape=(), dtype=float32)
-Tensor("FunctionOutputReshapeToConstraintShape/Shape:0", shape=(0,), dtype=int32)
-[1]
-self.tensor
-Tensor("FunctionOutputReshapeToConstraintShape/cond/Merge:0", shape=(1,), dtype=float32)
-current_world.constraint_loss  1111
-Tensor("Const_5:0", shape=(), dtype=float32)
-current_world.logic.loss(self.tensor)
-Tensor("sub:0", shape=(1,), dtype=float32)
-current_world.constraint_loss  222
-Tensor("Const_5:0", shape=(), dtype=float32)
-fr
-fr2
-5.0
-fr2
-4.0
-fr3
+loaded. picsize: [48, 48]
+(40000, 2, 48, 48, 1)
+normalized shape: (48, 48, 1) (48, 48, 1)
+debut
+class precedence list:
+  <class 'latplan.model.ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus'>
+  <class 'latplan.mixins.encoder_decoder.StridedConvolutionalMixin'>
+  <class 'latplan.mixins.encoder_decoder.ConvolutionalMixin'>
+  <class 'latplan.model.ConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus'>
+  <class 'latplan.model.DetActionMixin'>
+  <class 'latplan.model.NormalizedLogitAddBidirectionalMixin'>
+  <class 'latplan.model.NormalizedLogitAddPreconditionMixin'>
+  <class 'latplan.model.NormalizedLogitAddEffectMixin'>
+  <class 'latplan.model.LogitEffectMixin'>
+  <class 'latplan.model.BaseActionMixinAMA4Plus'>
+  <class 'latplan.model.BidirectionalMixin'>
+  <class 'latplan.model.PreconditionMixin'>
+  <class 'latplan.model.EffectMixin'>
+  <class 'latplan.model.BaseActionMixin'>
+  <class 'latplan.model.TransitionWrapper'>
+  <class 'latplan.model.StateAE'>
+  <class 'latplan.mixins.latent.ConcreteLatentMixin'>
+  <class 'latplan.model.EarlyStopMixin'>
+  <class 'latplan.mixins.encoder_decoder.FullConnectedMixin'>
+  <class 'latplan.mixins.encoder_decoder.EncoderDecoderMixin'>
+  <class 'latplan.model.AE'>
+  <class 'latplan.network.Network'>
+  <class 'object'>
+clearning tf session
+cleared tf session
+Building networks
+building a convolutional encoder
+pool per layer: 1 depth: 2 total pool: 1 H: 48 W: 48 dH: 0 dW: 0
+<keras.layers.convolutional.Conv2D object at 0x14b4ba290b10>
+[0, 48, 48, 1] -> (0, 48, 48, 32) : <keras.layers.convolutional.Conv2D object at 0x14b4ba290b10>
+<keras.layers.normalization.BatchNormalization object at 0x14b4b8ed2190>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.normalization.BatchNormalization object at 0x14b4b8ed2190>
+<keras.layers.core.Dropout object at 0x14b4b8ed21d0>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.core.Dropout object at 0x14b4b8ed21d0>
+<keras.layers.convolutional.Conv2D object at 0x14b4b8ed2150>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.convolutional.Conv2D object at 0x14b4b8ed2150>
+<keras.layers.normalization.BatchNormalization object at 0x14b4b8ed25d0>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.normalization.BatchNormalization object at 0x14b4b8ed25d0>
+<keras.layers.core.Dropout object at 0x14b4b8ed23d0>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.core.Dropout object at 0x14b4b8ed23d0>
+latent space shape is (48, 48, 32) : 300 propositions in total
+building a convolutional decoder
+pool per layer: 1 depth: 2 total pool: 1 H: 48 W: 48 dH: 0 dW: 0
+<keras.layers.core.Reshape object at 0x14b4b8ed90d0>
+[0, 48, 48, 32] -> (0, 48, 48, 32) : <keras.layers.core.Reshape object at 0x14b4b8ed90d0>
+<keras.layers.convolutional.Conv2DTranspose object at 0x14b4b8ed9190>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.convolutional.Conv2DTranspose object at 0x14b4b8ed9190>
+<keras.layers.normalization.BatchNormalization object at 0x14b4b8ed9490>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.normalization.BatchNormalization object at 0x14b4b8ed9490>
+<keras.layers.core.Dropout object at 0x14b4b8ed93d0>
+(0, 48, 48, 32) -> (0, 48, 48, 32) : <keras.layers.core.Dropout object at 0x14b4b8ed93d0>
+<keras.layers.convolutional.Conv2DTranspose object at 0x14b4b8ed9750>
+(0, 48, 48, 32) -> (0, 48, 48, 1) : <keras.layers.convolutional.Conv2DTranspose object at 0x14b4b8ed9750>
+_build_primary_build_primary
+Network built
+Building auxiliary networks
+Auxiliary network built
+Compiling networks
+there are 1 networks.
+there are 1 optimizers.
+there are 1 losses.
+compiling <keras.engine.training.Model object at 0x14b4b86bf750> with <keras_radam.optimizers.RAdam object at 0x14b4b814ec90>, <function BaseActionMixinAMA4Plus._build_primary.<locals>.loss at 0x14b4b875ae60>.
+Network compiled
+Loading networks from samples/puzzle_mnist_3_3_40000_CubeSpaceAE_AMA4Conv/logs/8dd53f4ca49f65444250447a16903f86 (with failure allowed)
+IN OPEN
+Avoided building <latplan.model.ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus object at 0x14b4e76c1490> twice.
+Avoided building <latplan.model.ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus object at 0x14b4e76c1490> twice.
+Avoided compiling <latplan.model.ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus object at 0x14b4e76c1490> twice.
+IN BOUCLE 
+samples/puzzle_mnist_3_3_40000_CubeSpaceAE_AMA4Conv/logs/8dd53f4ca49f65444250447a16903f86/net0.h5
+loading additional networks
+Network loaded
+Avoided loading <latplan.model.ConvolutionalConcreteDetNormalizedLogitAddBidirectionalTransitionAEPlus object at 0x14b4e76c1490> twice.
+KWARGS !!!!
+
+data shape
+(36000, 2, 48, 48, 1)
+yyyyy
+Tensor("Const_18:0", shape=(36000, 2, 48, 48, 1), dtype=float32)
+data_yyyyyy
+Tensor("Cast_4:0", shape=(?, 2, 48, 48, 1), dtype=float32)
+##########
+shapess
+Tensor("Const_18:0", shape=(36000, 2, 48, 48, 1), dtype=float32)
+Tensor("Cast_4:0", shape=(?, 2, 48, 48, 1), dtype=float32)
+aa
+Tensor("sub_27:0", shape=(36000, 1), dtype=float32)
+fin
+epoch 
+0
+epoch 
+1

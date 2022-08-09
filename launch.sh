@@ -12,7 +12,7 @@
 
 
 
-./reasoning2.py
+./training-latplan3.py
 
 
 

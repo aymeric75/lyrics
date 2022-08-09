@@ -177,7 +177,7 @@ class LukasiewiczStrong(FuzzyLogic):
         return tf.reduce_min(tf.reduce_max(arg, axis=-2), axis=-1)
 
     @staticmethod
-    def forall(a, axis):
+    def forall(a, axis=0):
         # return tf.reduce_mean(a, axis=axis)
         return tf.reduce_sum(a, axis=axis)
         # return tf.reduce_min(a, axis=axis)

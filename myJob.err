@@ -1,1 +1,7 @@
+2022-08-09 14:17:20.049112: W tensorflow/stream_executor/cuda/redzone_allocator.cc:312] Not found: ./bin/ptxas not found
+Relying on driver to perform ptx compilation. This message will be only logged once.
 Using TensorFlow backend.
+Traceback (most recent call last):
+  File "./training-latplan3.py", line 186, in <module>
+    resSAE = lyr.functions.LatplanSAE("resSAE",2304,99,[99]) # "99" because we don't use them
+TypeError: __init__() takes 2 positional arguments but 5 were given
