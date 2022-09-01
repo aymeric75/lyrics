@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+import tensorflow as tf
+
+from tensorflow import keras
+from keras import backend as K
+from keras_radam  import RAdam
+import keras.optimizers
+setattr(keras.optimizers,"radam", RAdam)
+
 
 #
 import sys
@@ -20,12 +28,38 @@ from train_common import parameters
 from lyrics import lyrics as lyr
 from lyrics import fuzzy as fuzz
 
-import tensorflow as tf
+
 from sklearn import datasets as data
 import matplotlib.pyplot as plt
 
 
+import numpy as np
 
+
+
+def reset_weights(model):
+    session = K.get_session()
+    for layer in model.layers:
+        
+        if hasattr(layer, 'kernel_initializer'):
+            print("re-init weights of layer : "+layer.name)
+            layer.kernel.initializer.run(session=session)
+
+
+
+
+def my_loss_fn(y_true, y_pred):
+
+    # y_true et y_pred sont (36000, 2, 48, 48, 1)
+
+    res_equal = 1. - tf.reduce_mean(tf.abs(y_pred - y_true), [1,2,3])
+
+    loss = 1 - tf.reduce_sum(res_equal, axis=0)
+
+    return loss
+
+    # doit retourner un array of loss, où chaque valeur correspond à 1 valeur du batch
+    # donc retourne un array de dim le batch
 
 
 
@@ -37,23 +71,41 @@ class isEqual():
         self.var = tf.get_variable(name="randomVar", shape=(36000, 1))
 
     def __call__(self, x, y):
-        #batch = tf.shape(x)[0]
-        #x = tf.reshape(x, [batch, -1])
-        #y = tf.reshape(y, [batch, -1])
-        print("shapess")
-        print(x)
-        #print(tf.shape(x))
-        print(y)
-        #print(tf.shape(y))
-        #aa = 1. - tf.reduce_mean(tf.abs(x - y), axis=1)
+      
+        # we compute mean across pairs (1), and accross dim of images (2, 3)
+        # dim 0 (= #examples) is left for reduce_sum (see l.forall)
         aa = 1. - tf.reduce_mean(tf.abs(x - y), [1,2,3])
-        print("aa")
-        print(aa)
         self.var.assign(aa)
         return self.var
 
 
+def model_loss_function(model, data):
 
+    #model.load()
+
+    y_true = data # car on est dans le cas d'un autoencoder ici
+
+    y_pred = model.predict(data)
+
+    res_equal = 1. - tf.reduce_mean(tf.abs(y_pred - y_true), [1,2,3])
+
+    loss = 1 - tf.reduce_sum(res_equal, axis=0)
+
+    return loss
+
+
+def return_iterator(data, nb_epochs, batch_size): # return get_next
+
+    dataset = tf.data.Dataset.from_tensor_slices(data) # = 36k Tensors de taille (2, 48, 48, 1) chacun
+                                                        # <DatasetV1Adapter shapes: (2, 48, 48, 1), types: tf.float64>
+    dataset = dataset.repeat(nb_epochs).batch(batch_size) # repeat the train data 'epoch' times (10 x 36k) et recombine en batchs 
+                                                       # de taille 'batch_size' (64)
+                                                       # => 5 625 'sets'
+                                                       # <DatasetV1Adapter shapes: (?, 2, 48, 48, 1), types: tf.float64>
+    iterator = dataset.make_one_shot_iterator() # creates the iterator
+    yy = iterator.get_next()
+
+    return  tf.cast(yy, tf.float32)
 
 
 def _add_misc_info(config):
@@ -86,6 +138,8 @@ parameters['hash'] = "8dd53f4ca49f65444250447a16903f86"
 transitions, states = load_puzzle('mnist', 3, 3, 40000, objects=False)
 train, val, test = train_val_test_split(transitions)
 
+
+# train : (36000, 2, 48, 48, 1)
 # print(len(train)) = 36000
 # print(len(val)) = 2000
 # print(len(test)) = 2000
@@ -95,77 +149,196 @@ path = 'samples/puzzle_mnist_3_3_40000_CubeSpaceAE_AMA4Conv'
 
 
 
+
+task = curry(loadsNetWithWeightsGOOD, latplan.model.get(parameters["aeclass"]), path, train, train, val, val)        
+_add_misc_info(parameters)
+os.chdir('../latplan')
+latplan_model, error = task(parameters)
+
+os.chdir('./')
+
+
+
+
+# instance of the Model class from Keras
+model = latplan_model.autoencoder
+
+
+reset_weights(model)
+
+
+# numpy array of (36000, 2, 48, 48, 1)
+train_data = train 
+
+
+def onetrainstep(model, data):
+
+    with tf.GradientTape() as tape:
+       #logits = model(data)
+       logits = model.train_on_batch(data, data)
+
+       evals = model.evaluate(data, data, steps=400, verbose=0)
+       print(evals)
+
+
+print(keras.__version__)
+
+model.compile(optimizer='adam', loss=my_loss_fn)
+train_data = np.array(np.split(train_data, 90))
+
+
+
+for step in range(100):
+
+
+    the_batch_data = tf.cast(train_data[step], dtype=tf.float32)
+    onetrainstep(model, the_batch_data)
+
+    if(step%20 == 0):
+
+        prediction = model.predict(np.expand_dims(test[step], axis=0))
+
+        plt.figure(figsize=(6,6))
+        plt.imshow(np.squeeze(prediction[0][0]),interpolation='nearest',cmap='gray')
+        plt.savefig('im'+str(step)+'.png')
+        # display the value of the loss function 
+
+
+exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
+
 
     ################################################
     # build model
     # <=> declaration de tous les inputs + 
     ################################################
 
-    print("debut")
-
-    #train = tf.placeholder(tf.float32, shape=(36000, 2, 48, 48, 1))
-    #val = tf.placeholder(tf.float32, shape=(2000, 2, 48, 48, 1))
-
+    # y = all predictions of the autoencoder over the training set (train)
     task = curry(loadsNetWithWeightsGOOD, latplan.model.get(parameters["aeclass"]), path, train, train, val, val)        
     _add_misc_info(parameters)
     os.chdir('../latplan')
-
     latplan_model, error = task(parameters)
-    y = latplan_model.autoencode(train) #
+    y = latplan_model.autoencode(train)
+    #y = latplan_model.autoencode(exxxx) #
+
     os.chdir('./')
-
-
-    # predictions
     y = tf.convert_to_tensor(y, dtype=tf.float32)
 
-    # formatting the training set
-    epochs = 10
+
+
+    # type(train) <class 'numpy.ndarray'>
+    # train shape: (36000, 2, 48, 48, 1)
+
+    # type(y) <class 'tensorflow.python.framework.ops.Tensor'>
+    # y shape: (36000, 2, 48, 48, 1)
+    # y : Tensor("Const_18:0", shape=(36000, 2, 48, 48, 1), dtype=float32)
+
+
+
+
+    # data_y = all the original images (formatted here, into tensors)
+    nb_epochs = 10
     batch_size = 64
-    iterations = len(train) * epochs
-    dataset = tf.data.Dataset.from_tensor_slices((train))
-    dataset = dataset.repeat(epochs).batch(batch_size)
-    iterator = dataset.make_one_shot_iterator()
-    data_y = iterator.get_next()
-    data_y = tf.cast(data_y, tf.float32)
+    data_y = return_iterator(train, nb_epochs, batch_size)
+    y = return_iterator(y, nb_epochs, batch_size)
 
 
+    #print("data_y") Tensor("Cast_4:0", shape=(?, 2, 48, 48, 1), dtype=float32)
 
-    # Loss
-    l = fuzz.LogicFactory.create("lukasiewicz-strong")
+    #print("y") Tensor("IteratorGetNext_1:0", shape=(?, 2, 48, 48, 1), dtype=float32)
+
+
+    # instanciation of isEqual (returns the mean between 2 sequences of images, i.e, originals and predicted here)
     equal = isEqual()
 
-    print("yyyyy")
-    print(y)
-    print("data_yyyyyy")
-    print(data_y)
-    print("##########")
 
-    l1_loss = 1 - l.forall(equal(y, data_y))
+    # Loss class, instanciated
+    l = fuzz.LogicFactory.create("lukasiewicz-strong")
+    
+    # call of the forall function from the "l" class
+    # concretly, does a reduc_sum over all the images (e.g 36 000 the training set)
+    
+    #l1_loss = 1 - l.forall(equal(y, data_y))
+
+    # 1. - tf.reduce_mean(tf.abs(x - y), [1,2,3])
+
+    res_equal = 1. - tf.reduce_mean(tf.abs(y - data_y), [1,2,3])
+
+    l1_loss = 1 - tf.reduce_sum(res_equal, axis=0)
+
+    #l1_loss = 1 - l.forall(equal(latplan_model.autoencoder, data_y))
 
 
+
+    #
+    #    
+    #    equal :         1. - tf.reduce_mean(tf.abs(model - y_tensor), [1,2,3])  #  
+    #
+    #    forall :        
+    #       y_data : Tensor("Cast_4:0", shape=(?, 2, 48, 48, 1), dtype=float32)
+    #       y : Tensor("Const_18:0", shape=(36000, 2, 48, 48, 1), dtype=float32)
+    #
+    #     
+
+
+
+    # could be useful ... (see Lyrics Autoencoder example, UNIT_CLARE_2)
     t_vars = tf.trainable_variables()
     lr = tf.placeholder(tf.float32, name='learning_rate')
+
     # Optimizer
-    #tf.train.AdamOptimizer(lr, beta1=0.5, beta2=0.999).minimize(l1_loss, var_list = t_vars)
-    #tf.train.AdamOptimizer(lr, beta1=0.5, beta2=0.999).minimize(l1_loss)
     opt = tf.train.AdamOptimizer().minimize(l1_loss)
+
+
+
     ################################################
     #                    TRAIN                     #
     ################################################
 
-    print("fin")
-
-    tf.global_variables_initializer().run()
-
-    for epoch in range(0, 2):
-
-        _, d_loss = sess.run([opt, l1_loss])
-        print("epoch ")
-        print(epoch)
 
 
-exit()
+
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((train, train))
+
+    epochs = 2
+
+    for epoch in range(epochs):
+
+        for step, (x_batch_train, y_batch_train) in enumerate(train_dataset):
+
+            with tf.GradientTape() as tape:
+
+                logits = model(x_batch_train, training=True)
+
+                loss_value = my_loss_fn(y_batch_train, logits)
+
+        # Use the gradient tape to automatically retrieve
+        # the gradients of the trainable variables with respect to the loss.
+        grads = tape.gradient(loss_value, model.trainable_weights)
+
+        # Run one step of gradient descent by updating
+        # the value of the variables to minimize the loss.
+        optimizer.apply_gradients(zip(grads, model.trainable_weights))
+
 
 # Define Domain and one Individual example for the input/output Images
 

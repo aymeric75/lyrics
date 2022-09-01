@@ -74,7 +74,7 @@ print("fr")
 epochs = 2
 for i in range(epochs):
     print("fr2")
-    _, l = sess.run((train_op, loss ))
+    _, l = sess.run((train_op, loss))
 
     print(l)
 
